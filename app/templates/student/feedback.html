@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Submit Feedback</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #6a11cb, #2575fc);
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+      text-align: center;
+      width: 400px;
+    }
+
+    h2 {
+      margin-bottom: 30px;
+      font-size: 28px;
+      color: #fff;
+      text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+    }
+
+    select, textarea {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0 20px 0;
+      border-radius: 10px;
+      border: none;
+      outline: none;
+      font-size: 16px;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #FF9800, #FFB74D);
+      font-size: 16px;
+      font-weight: bold;
+      color: #fff;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      transform: translateY(-3px) scale(1.03);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+      background: linear-gradient(135deg, #ffa733, #ffc76b);
+    }
+
+    #result {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+
+    a {
+      color: #fff;
+      text-decoration: underline;
+      display: block;
+      margin-top: 15px;
+    }
+
+    a:hover {
+      color: #ffeb3b;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Submit Feedback</h2>
+
+    <form id="feedbackForm">
+      <label for="event_id">Select Event:</label>
+      <select id="event_id" required></select>
+
+      <textarea id="feedback_text" placeholder="Enter your feedback..." required></textarea>
+
+      <label for="rating">Rating:</label>
+      <select id="rating" required>
+        <option value="">Select rating</option>
+        <option value="1">1 - Poor</option>
+        <option value="2">2 - Fair</option>
+        <option value="3">3 - Good</option>
+        <option value="4">4 - Very Good</option>
+        <option value="5">5 - Excellent</option>
+      </select>
+
+      <button type="submit">Submit Feedback</button>
+    </form>
+
+    <p id="result"></p>
+    <a href="/student/dashboard">Back to Dashboard</a>
+  </div>
+
+  <script>
+    const eventDropdown = document.getElementById("event_id");
+    const res = document.getElementById("result");
+
+    // Load events from backend
+    async function loadEvents() {
+      try {
+        const response = await fetch("/get_events");
+        const events = await response.json();
+        eventDropdown.innerHTML = "";
+
+        events.forEach(event => {
+          const option = document.createElement("option");
+          option.value = event.id;
+          option.textContent = event.name;
+          eventDropdown.appendChild(option);
+        });
+      } catch (err) {
+        console.error("Error loading events:", err);
+      }
+    }
+    loadEvents();
+
+    // Handle form submission
+    document.getElementById("feedbackForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const event_id = eventDropdown.value;
+      const feedback_text = document.getElementById("feedback_text").value.trim();
+      const rating = Number(document.getElementById("rating").value);
+
+      if (!event_id || !feedback_text || !rating) {
+        res.innerText = "All fields are required!";
+        res.style.color = "red";
+        return;
+      }
+
+      try {
+        const response = await fetch("/submit_feedback", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ event_id, feedback_text, rating })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          res.innerText = data.message;
+          res.style.color = "green";
+          setTimeout(() => {
+            window.location.href = "/student/dashboard";
+          }, 2000);
+        } else {
+          res.innerText = data.error || "Error submitting feedback";
+          res.style.color = "red";
+        }
+
+      } catch (err) {
+        res.innerText = "Network error!";
+        res.style.color = "red";
+      }
+    });
+  </script>
+</body>
+</html>

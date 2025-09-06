@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Event Registration</title>
+   <style>
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(to right, #6a11cb, #2575fc); color: #fff; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+    .container { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); padding: 40px; border-radius: 20px; box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3); text-align: center; width: 350px; }
+    h2 { margin-bottom: 30px; font-size: 28px; color: #fff; text-shadow: 1px 1px 4px rgba(0,0,0,0.5); }
+    select, input { width: 100%; padding: 12px; margin: 10px 0 20px 0; border-radius: 10px; border: none; outline: none; font-size: 16px; }
+    button { width: 100%; padding: 12px; border: none; border-radius: 10px; background: linear-gradient(135deg, #FF9800, #FFB74D); font-size: 16px; font-weight: bold; color: #fff; cursor: pointer; transition: all 0.3s ease; }
+    button:hover { transform: translateY(-3px) scale(1.03); box-shadow: 0 6px 20px rgba(0,0,0,0.3); background: linear-gradient(135deg, #ffa733, #ffc76b); }
+    #result { margin-top: 20px; font-weight: bold; }
+    a { color: #fff; text-decoration: underline; display: block; margin-top: 15px; }
+    a:hover { color: #ffeb3b; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>Register for Event</h2>
+    <form id="registrationForm">
+      <select id="eventSelect" required>
+        <option value="">-- Select Event --</option>
+        <!-- dynamically filled -->
+      </select>
+      <button type="submit">Register</button>
+    </form>
+    <p id="result"></p>
+    <a href="/student/dashboard">Back to Dashboard</a>
+  </div>
+
+  <script>
+    // ✅ Fetch available events and populate dropdown
+    async function loadEvents() {
+      try {
+        const response = await fetch("/get_events"); // backend should return JSON list of events
+        const events = await response.json();
+        const dropdown = document.getElementById("eventSelect");
+        events.forEach(ev => {
+          const option = document.createElement("option");
+          option.value = ev.id; // event_id
+          option.textContent = `${ev.name} (ID: ${ev.id})`;
+          dropdown.appendChild(option);
+        });
+      } catch (err) {
+        console.error("Failed to load events", err);
+      }
+    }
+
+    document.getElementById("registrationForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const event_id = document.getElementById("eventSelect").value;
+      if (!event_id) {
+        document.getElementById("result").innerText = "Please select an event!";
+        document.getElementById("result").style.color = "yellow";
+        return;
+      }
+
+      try {
+        const response = await fetch("/student/register_event", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ event_id })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          document.getElementById("result").innerText = data.message;
+          document.getElementById("result").style.color = "lightgreen";
+
+            setTimeout(() => {
+            window.location.href = "/student/dashboard";
+        }, 2000);
+
+        } else {
+          document.getElementById("result").innerText = data.error || "Registration failed!";
+          document.getElementById("result").style.color = "red";
+        }
+      } catch (err) {
+        document.getElementById("result").innerText = "Network error!";
+        document.getElementById("result").style.color = "orange";
+      }
+    });
+
+    // load events on page load
+    loadEvents();
+  </script>
+</body>
+</html>

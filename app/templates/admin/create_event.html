@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Event</title>
+  <style>
+    /* Base Styles */
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: linear-gradient(135deg, #6a11cb, #2575fc);
+      color: #fff;
+    }
+
+    /* Container */
+    .container {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(12px);
+      padding: 40px 30px;
+      border-radius: 20px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+      width: 400px;
+      text-align: center;
+    }
+
+    /* Heading */
+    h2 {
+      font-size: 28px;
+      margin-bottom: 30px;
+      color: #fff;
+      text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Inputs */
+    input[type="text"],
+    input[type="number"],
+    input[type="date"],
+    textarea {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 20px;
+      border-radius: 10px;
+      border: none;
+      outline: none;
+      font-size: 16px;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    /* Button */
+    button {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #FF9800, #FFB74D);
+      font-size: 16px;
+      font-weight: bold;
+      color: #fff;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      transform: translateY(-3px) scale(1.03);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+      background: linear-gradient(135deg, #ffa733, #ffc76b);
+    }
+
+    /* Result Text */
+    #result {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+
+    /* Back link */
+    a {
+      color: #fff;
+      text-decoration: underline;
+      display: block;
+      margin-top: 15px;
+      transition: color 0.3s;
+    }
+    a:hover {
+      color: #ffeb3b;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Create Event</h2>
+
+    <form id="eventForm">
+      <input type="number" id="college_id" placeholder="College ID" required>
+      <input type="text" id="name" placeholder="Event Name" required>
+      <input type="text" id="event_type" placeholder="Event Type (Optional)">
+      <input type="date" id="date" required>
+      <textarea id="description" placeholder="Event Description (Optional)"></textarea>
+      <button type="submit">Create Event</button>
+    </form>
+
+    <p id="result"></p>
+    <a href="/index">Back to Home</a>
+  </div>
+
+  <script>
+    // Set minimum date to today
+    const today = new Date().toISOString().split("T")[0];
+    document.getElementById("date").setAttribute("min", today);
+
+    document.getElementById("eventForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const result = document.getElementById("result");
+
+      const payload = {
+        college_id: document.getElementById("college_id").value,
+        name: document.getElementById("name").value.trim(),
+        event_type: document.getElementById("event_type").value.trim(),
+        date: document.getElementById("date").value,
+        description: document.getElementById("description").value.trim()
+      };
+
+      if (!payload.college_id || !payload.name || !payload.date) {
+        result.innerText = "College ID, Event Name, and Date are required!";
+        result.style.color = "red";
+        return;
+      }
+
+      try {
+        const response = await fetch("/create_event", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          result.innerText = "Event created successfully!";
+          result.style.color = "green";
+          setTimeout(() => { window.location.href = "/index"; }, 2000);
+        } else {
+          result.innerText = data.error || "Failed to create event.";
+          result.style.color = "red";
+        }
+      } catch (err) {
+        result.innerText = "Network error!";
+        result.style.color = "red";
+      }
+    });
+  </script>
+</body>
+</html>
