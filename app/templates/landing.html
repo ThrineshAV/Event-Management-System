@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Campus Event System - Landing</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      text-align: center;
+      background: linear-gradient(135deg, #6a11cb, #2575fc);
+      color: white;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+      animation: bgAnimate 15s ease infinite;
+    }
+
+    @keyframes bgAnimate {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    h1 {
+      margin-top: 50px;
+      font-size: 3em;
+      text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+      animation: fadeInDown 1.5s ease forwards;
+    }
+
+    @keyframes fadeInDown {
+      0% { opacity: 0; transform: translateY(-50px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .container {
+      display: flex;
+      justify-content: center;
+      gap: 50px;
+      margin-top: 80px;
+      flex-wrap: wrap;
+    }
+
+    .box {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0px 8px 25px rgba(0,0,0,0.4);
+      width: 250px;
+      transition: transform 0.3s, box-shadow 0.3s;
+      backdrop-filter: blur(10px);
+    }
+
+    .box:hover {
+      transform: translateY(-10px) scale(1.05);
+      box-shadow: 0px 12px 30px rgba(0,0,0,0.5);
+      cursor: pointer;
+    }
+
+    .box h2 {
+      margin-bottom: 25px;
+      font-size: 1.5em;
+      text-shadow: 1px 1px 5px rgba(0,0,0,0.5);
+    }
+
+    .btn {
+      display: block;
+      margin: 10px auto;
+      padding: 12px 25px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      background: linear-gradient(135deg, #ff416c, #ff4b2b);
+      color: #fff;
+      font-weight: bold;
+      font-size: 1em;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+
+    .btn:hover {
+      background: linear-gradient(135deg, #ff4b2b, #ff416c);
+      transform: scale(1.1);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+    }
+
+    /* Floating dots animation */
+    .dot {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0.6;
+      background: white;
+      animation: float 6s infinite ease-in-out;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0) translateX(0); }
+      50% { transform: translateY(-20px) translateX(15px); }
+      100% { transform: translateY(0) translateX(0); }
+    }
+  </style>
+</head>
+<body>
+  <h1>Welcome to Campus Event System</h1>
+
+  <div class="container">
+    <!-- Admin Section -->
+    <div class="box">
+      <h2>Admin Portal</h2>
+      <a class="btn" href="/admin/login_form">Login</a>
+      <a class="btn" href="/admin/register_form">Register</a>
+    </div>
+
+    <!-- Student Section -->
+    <div class="box">
+      <h2>Student Portal</h2>
+      <a class="btn" href="/login_student_form">Login</a>
+      <a class="btn" href="/register_student_form">Register</a>
+    </div>
+  </div>
+
+  <!-- Dynamic floating dots -->
+  <script>
+    for (let i = 0; i < 15; i++) {
+      const dot = document.createElement('div');
+      dot.className = 'dot';
+      dot.style.width = dot.style.height = Math.random() * 10 + 5 + 'px';
+      dot.style.top = Math.random() * window.innerHeight + 'px';
+      dot.style.left = Math.random() * window.innerWidth + 'px';
+      dot.style.animationDuration = 3 + Math.random() * 3 + 's';
+      document.body.appendChild(dot);
+    }
+  </script>
+</body>
+</html>

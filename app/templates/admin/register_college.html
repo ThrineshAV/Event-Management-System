@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register College</title>
+  <style>
+    /* Base Styles */
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: linear-gradient(135deg, #6a11cb, #2575fc);
+      color: #fff;
+    }
+
+    /* Container */
+    .container {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(12px);
+      padding: 40px 30px;
+      border-radius: 20px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+      width: 350px;
+      text-align: center;
+    }
+
+    /* Heading */
+    h2 {
+      font-size: 28px;
+      margin-bottom: 30px;
+      color: #fff;
+      text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Inputs */
+    input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 20px;
+      border-radius: 10px;
+      border: none;
+      outline: none;
+      font-size: 16px;
+    }
+
+    /* Button */
+    button {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #FF9800, #FFB74D);
+      font-size: 16px;
+      font-weight: bold;
+      color: #fff;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      transform: translateY(-3px) scale(1.03);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+      background: linear-gradient(135deg, #ffa733, #ffc76b);
+    }
+
+    /* Result Text */
+    #result {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+
+    /* Link Styling */
+    a {
+      color: #fff;
+      text-decoration: underline;
+      display: block;
+      margin-top: 15px;
+      transition: color 0.3s;
+    }
+    a:hover {
+      color: #ffeb3b;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Register College</h2>
+    <form id="collegeForm">
+      <input type="text" id="college_name" placeholder="Enter College Name" required>
+      <button type="submit">Register</button>
+    </form>
+
+    <p id="result"></p>
+    <a href="/index">Back to Home</a>
+  </div>
+
+  <script>
+    document.getElementById("collegeForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const payload = { name: document.getElementById("college_name").value.trim() };
+      const result = document.getElementById("result");
+
+      if (!payload.name) {
+        result.innerText = "College name is required!";
+        result.style.color = "red";
+        return;
+      }
+
+      try {
+        const response = await fetch("/register_college", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          result.innerText = data.message;
+          result.style.color = "green";
+          setTimeout(() => { window.location.href = "/index"; }, 2000);
+        } else {
+          result.innerText = data.error || "Error registering college";
+          result.style.color = "red";
+        }
+
+      } catch (err) {
+        result.innerText = "Network error!";
+        result.style.color = "red";
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #FF6A00, #EE0979);
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(12px);
+      padding: 40px 30px;
+      border-radius: 20px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+      width: 350px;
+      text-align: center;
+    }
+
+    h2 {
+      color: #fff;
+      margin-bottom: 30px;
+      font-size: 28px;
+      text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+    }
+
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0 20px 0;
+      border-radius: 10px;
+      border: none;
+      outline: none;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #FF9800, #FFB74D);
+      color: #fff;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      transform: translateY(-3px) scale(1.03);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+      background: linear-gradient(135deg, #ffa733, #ffc76b);
+    }
+
+    .flash-messages {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    .flash-messages li {
+      list-style: none;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+
+    .login-link {
+      margin-top: 20px;
+      display: block;
+      color: #fff;
+      text-decoration: underline;
+      transition: color 0.3s;
+    }
+
+    .login-link:hover {
+      color: #ffeb3b;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>Admin Login</h2>
+
+    <!-- Flash messages -->
+    <ul class="flash-messages">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <li style="color: {% if category == 'danger' %}#ff4d4d{% elif category == 'success' %}#4caf50{% else %}#fff{% endif %};">
+              {{ message }}
+            </li>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+    </ul>
+
+    <form method="POST" action="{{ url_for('admin_login') }}">
+      <input type="email" name="email" placeholder="Email" required>
+      <input type="password" name="password" placeholder="Password" required>
+      <button type="submit">Login</button>
+    </form>
+
+    <a class="login-link" href="{{ url_for('admin_register_form') }}">Don't have an account? Register here</a>
+  </div>
+
+</body>
+</html>

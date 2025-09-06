@@ -1,0 +1,147 @@
+<<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pending Attendance Requests</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #6a11cb, #2575fc);
+      padding-top: 50px;
+      color: #fff;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(12px);
+      padding: 30px 20px;
+      border-radius: 20px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+      width: 90%;
+      max-width: 800px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 28px;
+      text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+      font-size: 16px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 12px;
+      text-align: center;
+      border-bottom: 1px solid rgba(255,255,255,0.3);
+    }
+
+    th {
+      background: rgba(255,255,255,0.2);
+      color: #fff;
+    }
+
+    button {
+      padding: 8px 14px;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin: 2px;
+    }
+
+    .approve {
+      background: linear-gradient(135deg, #4caf50, #81c784);
+      color: #fff;
+    }
+    .approve:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    }
+
+    .reject {
+      background: linear-gradient(135deg, #f44336, #e57373);
+      color: #fff;
+    }
+    .reject:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    }
+
+    a {
+      display: block;
+      text-align: center;
+      color: #fff;
+      text-decoration: underline;
+      margin-top: 10px;
+      transition: color 0.3s;
+    }
+    a:hover {
+      color: #ffeb3b;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Pending Attendance Requests</h2>
+
+    {% if requests %}
+    <table>
+      <thead>
+        <tr>
+          <th>Request ID</th>
+          <th>Student Name</th>
+          <th>Event</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for req in requests %}
+        <tr>
+          <td>{{ req.id }}</td>
+          <td>{{ req.student.username }}</td>
+          <td>{{ req.event.name }}</td>
+          <td>{{ req.status }}</td>
+          <td>
+            {% if req.status == "Pending" %}
+              <!-- Approve button -->
+              <form action="{{ url_for('approve_attendance', request_id=req.id) }}" method="POST" style="display:inline;">
+                <button type="submit" class="approve">Approve</button>
+              </form>
+              <!-- Reject button -->
+              <form action="{{ url_for('reject_attendance', request_id=req.id) }}" method="POST" style="display:inline;">
+                <button type="submit" class="reject">Reject</button>
+              </form>
+            {% else %}
+              <span style="font-weight:bold; color: #fff;">Handled</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+      <p style="text-align:center;">No pending requests.</p>
+    {% endif %}
+
+    <a href="{{ url_for('admin_dashboard') }}">Back to Dashboard</a>
+  </div>
+</body>
+</html>
