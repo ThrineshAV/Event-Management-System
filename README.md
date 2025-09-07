@@ -77,20 +77,7 @@ source venv/bin/activate
 
 pip install -r requirements.txt
 
-
-### 5. Initialize the database
-
-Open Python shell or run:
-
-
-from app import db, app
-with app.app_context():
-    db.create_all()
-
-
-This will create the `campus_events.db` SQLite database with all tables.
-
-### 6. Run the Flask app
+### 5. Run the Flask app
 
 
 python app.py
